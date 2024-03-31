@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Send WhatsApp Message</title>
+</head>
+<body>
+<h2>Send WhatsApp Message</h2>
+<form action="#" th:action="/api/sendMsg" th:object="${message}" method="post">
+    <label for="toMobileNumber">Mobile Number:</label>
+    <input type="text" id="toMobileNumber" th:field="*{toMobileNumber}" />
+
+<!--    <label for="lastName">Last Name:</label>-->
+    <input type="hidden" id="typeOfMsg" th:field="*{typeOfMsg}" value="text"/>
+
+    <label for="message">Message:</label>
+    <input type="textarea" id="message" th:field="*{message}" rows="5" cols="30" />
+    <button type="submit">Submit</button>
+</form>
+</body>
+</html>

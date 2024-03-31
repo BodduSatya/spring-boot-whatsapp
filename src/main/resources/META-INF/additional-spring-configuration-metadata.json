@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "wa.config.phoneNumber",
+      "type": "java.lang.String",
+      "description": "Description for wa.config.phoneNumber."
+  }
+] }
