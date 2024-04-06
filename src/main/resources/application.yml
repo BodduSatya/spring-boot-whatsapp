@@ -9,4 +9,4 @@ openai:
   model: gpt-3.5-turbo
   api:
     url: https://api.openai.com
-    key: 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
+    key: <your-openapi-key>
