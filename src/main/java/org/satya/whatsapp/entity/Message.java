@@ -41,11 +41,14 @@ public class Message {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime senton;
 
-    public Message(String toMobileNumber,String message,String typeOfMsg,LocalDateTime createdon){
+    public Message(String toMobileNumber,String message,String typeOfMsg,LocalDateTime createdon, String mediaUrl,String caption,long id){
         this.toMobileNumber = toMobileNumber;
         this.message = message;
         this.typeOfMsg = typeOfMsg;
         this.createdon = createdon;
+        this.mediaUrl = mediaUrl;
+        this.caption = caption;
+        this.id = id;
     }
 
 }

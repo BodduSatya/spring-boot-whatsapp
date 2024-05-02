@@ -1,0 +1,65 @@
+
+<div class="container card msg-container mt-1">
+  <h3 class="text-center mt-2 mb-3 rainbow-text">Upload Files for WhatsApp Sender</h3>
+  <div class="row mt-2 mb-5" style="align-self: center;">
+    <div class="col-md-12 input-group" style="width: 600px;align-self: center;" >
+      <input class="form-control" type="file" #fileInput_el aria-describedby="fileUpload" (change)="onFileSelected($event)" multiple [accept]="fileExtensions()">
+    </div>
+<!--    <div class="col-md-6 mb-3 input-group " >-->
+<!--      &nbsp;-->
+<!--    </div>-->
+  </div>
+
+  <div class="container" *ngIf="data.length > 0">
+    <div class="row">
+      <div class="col-md-6">
+        <input type="text" class="form-control mt-3" placeholder="Search" [(ngModel)]="searchText"
+               (ngModelChange)="filterData()">
+      </div>
+
+    </div>
+    <div class="row mt-3">
+      <div class="col-md-12">
+        <table class="table">
+          <thead>
+          <tr>
+            <th>File Name</th>
+            <th>Size(bytes)</th>
+            <th>Upload On</th>
+            <th>File Path</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let row of filteredData | slice: (currentPage - 1) * itemsPerPage : currentPage * itemsPerPage">
+            <td>{{ row?.name }}</td>
+            <td>{{ row?.size }}</td>
+            <td>{{ row?.createdDate }}</td>
+            <td>{{ row?.filePath }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <ul class="pagination">
+          <li class="page-item" *ngFor="let page of totalPagesArray" [class.active]="currentPage === page">
+            <a class="page-link" (click)="changePage(page)">{{ page }}</a>
+          </li>
+          <li>
+            <select class="form-select" style="margin-left: 30px; width: 75px;" [(ngModel)]="itemsPerPage" (change)="changeItemsPerPage()">
+              <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}</option>
+            </select>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" *ngIf="data.length == 0">
+    <div class="row">
+      <p style="text-align: center;color: gray"><strong>No uploaded files here!</strong></p>
+    </div>
+  </div>
+
+</div>

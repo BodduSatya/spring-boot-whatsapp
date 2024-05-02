@@ -67,7 +67,7 @@ public class MyListener implements Listener {
 
     @Override
     public void onNewMessage(Whatsapp w, MessageInfo info) {
-        //System.out.printf("*** Message received... *** %s \n ", info.toJson());
+        System.out.printf("*** Message received... *** %s \n ", info.toJson());
 
         if (!(info.message().content() instanceof TextMessage textMessage)) {
             return;

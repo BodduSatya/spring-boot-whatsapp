@@ -1,0 +1,15 @@
+.tick-mark-list .list-group-item {
+  position: relative;
+  padding-left: 2rem; /* Adjust as needed */
+}
+
+.tick-mark-list .list-group-item::before {
+  content: '\2713'; /* Unicode character for tick mark */
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #00a884; /* Color of the tick mark */
+  font-size: 1.2rem; /* Adjust as needed */
+  padding-left: 8px;
+}

@@ -1,0 +1,26 @@
+.cssload-container {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.7);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cssload-speeding-wheel {
+  width: 63px;
+  height: 63px;
+  border: 4px solid black;
+  border-radius: 50%;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  animation: cssload-spin 500ms infinite linear;
+}
+
+@keyframes cssload-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

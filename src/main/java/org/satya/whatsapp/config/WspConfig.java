@@ -2,23 +2,17 @@ package org.satya.whatsapp.config;
 
 import it.auties.whatsapp.api.*;
 import it.auties.whatsapp.controller.DefaultControllerSerializer;
-import org.modelmapper.ModelMapper;
 import org.satya.whatsapp.listener.MyListener;
-import org.satya.whatsapp.service.ChatGPTService;
 import org.satya.whatsapp.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.ResourceUtils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Scanner;
 
 @Configuration
 public class WspConfig {

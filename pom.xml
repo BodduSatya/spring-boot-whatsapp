@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.satya</groupId>
     <artifactId>whatsapp</artifactId>
-    <version>0.0.4-SNAPSHOT</version>
+    <version>0.0.5-SNAPSHOT</version>
     <name>whatsapp</name>
     <packaging>jar</packaging>
     <description>whatsapp</description>
@@ -61,7 +61,7 @@
         <dependency>
             <groupId>com.github.auties00</groupId>
             <artifactId>cobalt</artifactId>
-            <version>0.0.4</version>
+            <version>0.0.5</version>
         </dependency>
 
         <!-- AGREGO LAS LIBRERIAS DE JACKSON MANUALMENTE PORQUE SINO SPRINGBOOT ME PONE UNA VERSION MAS NUEVA Y ME DA ERROR-->
@@ -136,11 +136,15 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
 <!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-webflux</artifactId>-->
+<!--            <groupId>io.projectreactor</groupId>-->
+<!--            <artifactId>reactor-test</artifactId>-->
+<!--            <scope>test</scope>-->
 <!--        </dependency>-->
-
 <!--        &lt;!&ndash; https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui &ndash;&gt;-->
 <!--        <dependency>-->
 <!--            <groupId>io.springfox</groupId>-->
@@ -154,6 +158,25 @@
 <!--            <artifactId>springdoc-openapi-ui</artifactId>-->
 <!--            <version>1.7.0</version>-->
 <!--        </dependency>-->
+
+        <!-- read xls -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>5.2.3</version> <!-- or the latest version -->
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.3</version> <!-- or the latest version -->
+        </dependency>
+
+        <!-- json -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20090211</version>
+        </dependency>
 
 
     </dependencies>

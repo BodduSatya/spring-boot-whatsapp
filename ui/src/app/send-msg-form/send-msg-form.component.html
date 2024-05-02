@@ -1,0 +1,47 @@
+<form>
+  <div class="container card msg-container">
+    <h3 class="text-center mt-2 mb-5 rainbow-text">WhatsApp Sender</h3>
+    <div class="alert alert-danger" role="alert" *ngIf="errMsg && errMsg.length > 0">
+      <p>{{errMsg}}</p>
+    </div>
+
+    <div class="mb-3 input-group">
+      <span class="input-group-text" id="typeofmsg" style="width:135px;">Message Type</span>
+      <select class="form-select" [(ngModel)]="typeofmsg" name="typeofmsg" aria-describedby="typeofmsg">
+        <option *ngFor="let i of msgTypes" [value]="i.value">{{ i.label }}</option>
+      </select>
+    </div>
+
+    <div class="mb-3 input-group">
+      <span class="input-group-text" id="phoneNumbers" style="width:135px;">Phone Number</span>
+      <textarea class="form-control" aria-describedby="phoneNumbers" name="phoneNumbers"
+                placeholder="Phone Numbers including ISD code without +"
+                [(ngModel)]="phoneNumbers" ></textarea>
+    </div>
+
+    <div class="mb-3 input-group" *ngIf="typeofmsg === '1'">
+      <span class="input-group-text" id="message" style="width:135px;">Message</span>
+      <textarea class="form-control" name="message" aria-describedby="message"
+                [(ngModel)]="message" placeholder="Enter your message here"></textarea>
+    </div>
+
+    <div class="mb-3 input-group" *ngIf="typeofmsg === '2' || typeofmsg === '3' || typeofmsg === '4' || typeofmsg === '5' || typeofmsg === '6'">
+      <input class="form-control" type="file" #fileInput_el aria-describedby="fileUpload" (change)="onFileSelected($event)" multiple [accept]="fileExtensions()">
+    </div>
+
+    <div class="mb-3 input-group" *ngIf="typeofmsg === '2' || typeofmsg === '3' || typeofmsg === '4' || typeofmsg === '5' || typeofmsg === '6'">
+      <span class="input-group-text" id="caption" style="width:135px;">Caption</span>
+      <input type="text" class="form-control" aria-describedby="caption" [(ngModel)]="caption" name="caption" placeholder="Enter caption">
+    </div>
+
+    <div class="mb-3 input-group">
+      <a (click)="sendMessage()" class="btn btn-primary" *ngIf="sendMsgBtn" style="background-color: purple">
+        <i class="fa fa-paper-plane" aria-hidden="true"></i> Send
+      </a>
+      <a (click)="resetForm()" class="btn btn-danger" style="margin-left: 5px;">
+        <i class="fa fa-eraser" aria-hidden="true"></i> Reset
+      </a>
+    </div>
+
+  </div>
+</form>

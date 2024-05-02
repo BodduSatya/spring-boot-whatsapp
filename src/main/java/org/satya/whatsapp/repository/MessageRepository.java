@@ -14,10 +14,16 @@ public interface MessageRepository extends JpaRepository<Message,Long> {
     @Query("SELECT e FROM MESSAGES e WHERE e.createdon BETWEEN :startDate AND :endDate")
     List<Message> getAllMessagesBetweenDates(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
-    @Query("SELECT e FROM MESSAGES e WHERE e.createdon BETWEEN :startDate AND :endDate AND e.sendStatus ='0' ")
+    @Query("SELECT e FROM MESSAGES e WHERE e.createdon BETWEEN :startDate AND :endDate AND e.toMobileNumber = :mobileNo")
+    List<Message> getAllMessagesBetweenDatesMobNo(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, @Param("mobileNo") String mobileNo);
+
+    @Query("SELECT e FROM MESSAGES e WHERE e.createdon BETWEEN :startDate AND :endDate AND e.sendStatus <>'1' ")
     List<Message> getAllNonSendMessagesBetweenDates(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
-    @Query("SELECT e FROM MESSAGES e WHERE e.createdon BETWEEN :startDate AND :endDate AND e.sendStatus ='0' AND e.toMobileNumber = :mobileNo ")
+    @Query("SELECT e FROM MESSAGES e WHERE e.createdon BETWEEN :startDate AND :endDate AND e.sendStatus <>'1' AND e.toMobileNumber = :mobileNo ")
     List<Message> getAllNonSendMessagesBetweenDatesMobNo(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate , @Param("mobileNo") String mobileNo);
+
+    @Query("SELECT e FROM MESSAGES e WHERE e.id in :mids ")
+    List<Message> getNonSendMessagesByMIDs( @Param("mids") String[] mids);
 
 }
