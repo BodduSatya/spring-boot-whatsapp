@@ -126,15 +126,18 @@ public class MessageService {
     }
 
     public synchronized ResponseMessage sendMessageV2(MessageDTO msg){
+        org.satya.whatsapp.entity.Message message = null;
         try {
-            org.satya.whatsapp.entity.Message message = new org.satya.whatsapp.entity.Message(msg.getToMobileNumber(),msg.getMessage(),msg.getTypeOfMsg(),
+            message = new org.satya.whatsapp.entity.Message(msg.getToMobileNumber(),msg.getMessage(),msg.getTypeOfMsg(),
                     LocalDateTime.now(),msg.getMediaUrl(),msg.getCaption(),msg.getId());
 
             if( msg.getId() == 0 )
                 saveMessage(message);
 
             Chat chat = null;
-            if(msg.isGroupMsg()) {
+            //ContactJid contactJid = null;
+            ContactJid contactJid = ContactJid.of(msg.getToMobileNumber());
+            /*if(msg.isGroupMsg()) {
                 chat = whatsappApi.store()
                         .findChatByJid(ContactJid.of(msg.getToMobileNumber()))
                         .filter(Chat::isGroup)
@@ -146,22 +149,23 @@ public class MessageService {
                         );
             }
             else{
-                ContactJid contactJid = ContactJid.builder().server(ContactJid.Server.WHATSAPP).user(msg.getToMobileNumber()).build();
-                chat = whatsappApi.store()
+                contactJid = ContactJid.builder().server(ContactJid.Server.WHATSAPP).user(msg.getToMobileNumber()).build();
+                *//*chat = whatsappApi.store()
                         .findChatByJid(contactJid)
                         .orElseThrow(() -> {
                                     message.setSendStatus("2");
                                     updateMessageStatus(message);
                                     return new NoSuchElementException("Hey," + msg.getToMobileNumber() + " not exist");
                                 }
-                        );
-            }
+                        );*//*
+
+            }*/
 
             //text / image / audio  / video / gif / document / reaction / remove_reaction
             switch (msg.getTypeOfMsg() ) {
                 case "text" -> {
                     if( msg.getMessage()!=null && !msg.getMessage().isEmpty())
-                        whatsappApi.sendMessage(chat, msg.getMessage());
+                        whatsappApi.sendMessage(contactJid, msg.getMessage());
                     else
                         log.info(" Missing required parameter message");
                 }
@@ -172,7 +176,7 @@ public class MessageService {
                                 .media(MediaUtils.readBytes(msg.getMediaUrl()))
                                 .caption(msg.getCaption())
                                 .build();
-                        whatsappApi.sendMessage(chat, image).join();
+                        whatsappApi.sendMessage(contactJid, image).join();
                         if( msg.isLogRequired()) log.info("Sent image");
                     }
                     else
@@ -187,7 +191,7 @@ public class MessageService {
                                 .fileName(msg.getFileName())
 //                              .pageCount(1)
                                 .build();
-                        whatsappApi.sendMessage(chat, document).join();
+                        whatsappApi.sendMessage(contactJid, document).join();
                         if( msg.isLogRequired()) log.info("Sent document");
                     }
                     else
@@ -200,7 +204,7 @@ public class MessageService {
                                 .media(MediaUtils.readBytes(msg.getMediaUrl()))
                                 .voiceMessage(true)
                                 .build();
-                        whatsappApi.sendMessage(chat, audio).join();
+                        whatsappApi.sendMessage(contactJid, audio).join();
                         if( msg.isLogRequired()) log.info("Sent audio");
                     }
                     else
@@ -212,7 +216,7 @@ public class MessageService {
                         var video = VideoMessage.simpleVideoBuilder()
                                 .media(MediaUtils.readBytes(msg.getMediaUrl()))
                                 .caption(msg.getCaption()).build();
-                        whatsappApi.sendMessage(chat, video).join();
+                        whatsappApi.sendMessage(contactJid, video).join();
                         if( msg.isLogRequired()) log.info("Sent video");
                     }
                     else
@@ -224,7 +228,7 @@ public class MessageService {
                         var video = VideoMessage.simpleGifBuilder()
                                 .media(MediaUtils.readBytes(msg.getMediaUrl()))
                                 .caption(msg.getCaption()).build();
-                        whatsappApi.sendMessage(chat, video).join();
+                        whatsappApi.sendMessage(contactJid, video).join();
                         if( msg.isLogRequired()) log.info("Sent video");
                     } else
                         log.info(" Missing required parameter mediaUrl ");
@@ -238,6 +242,8 @@ public class MessageService {
             updateMessageStatus(message);
 
         } catch (Exception e) {
+//            message.setSendStatus("2");
+//            updateMessageStatus(message);
             System.out.println("e = " + e.getMessage());
             return new ResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR,"Failed! message sending failed to "+msg.getToMobileNumber() );
         }
@@ -245,6 +251,7 @@ public class MessageService {
     }
 
     public synchronized ResponseMessage sendMessageV3(MessageDTO msg){
+        org.satya.whatsapp.entity.Message message = null;
         try {
             String mobileNos[] = msg.getToMobileNumber().split(",");
 
@@ -252,14 +259,16 @@ public class MessageService {
 
                 msg.setToMobileNumber(mobileNos[i]);
 
-                org.satya.whatsapp.entity.Message message = new org.satya.whatsapp.entity.Message(msg.getToMobileNumber(), msg.getMessage(), msg.getTypeOfMsg(),
+                message = new org.satya.whatsapp.entity.Message(msg.getToMobileNumber(), msg.getMessage(), msg.getTypeOfMsg(),
                         LocalDateTime.now(),msg.getMediaUrl(),msg.getCaption(),msg.getId());
 
                 saveMessage(message);
 
-                Chat chat = null;
-                if (msg.isGroupMsg()) {
-                    chat = whatsappApi.store()
+//                Chat chat = null;
+                ContactJid contactJid = ContactJid.of(msg.getToMobileNumber());
+                /*if (msg.isGroupMsg()) {
+                    contactJid = ContactJid.of(msg.getToMobileNumber());
+                    *//*chat = whatsappApi.store()
                             .findChatByJid(ContactJid.of(msg.getToMobileNumber()))
                             .filter(Chat::isGroup)
                             .orElseThrow(() -> {
@@ -267,24 +276,24 @@ public class MessageService {
                                         updateMessageStatus(message);
                                         return new NoSuchElementException("Hey," + msg.getToMobileNumber() + " not exist");
                                     }
-                            );
+                            );*//*
                 } else {
-                    ContactJid contactJid = ContactJid.builder().server(ContactJid.Server.WHATSAPP).user(msg.getToMobileNumber()).build();
-                    chat = whatsappApi.store()
-                            .findChatByJid(contactJid)
-                            .orElseThrow(() -> {
-                                        message.setSendStatus("2");
-                                        updateMessageStatus(message);
-                                        return new NoSuchElementException("Hey," + msg.getToMobileNumber() + " not exist");
-                                    }
-                            );
-                }
+                     contactJid = ContactJid.builder().server(ContactJid.Server.WHATSAPP).user(msg.getToMobileNumber()).build();
+//                    chat = whatsappApi.store()
+//                            .findChatByJid(contactJid)
+//                            .orElseThrow(() -> {
+//                                        message.setSendStatus("2");
+//                                        updateMessageStatus(message);
+//                                        return new NoSuchElementException("Hey," + msg.getToMobileNumber() + " not exist");
+//                                    }
+//                            );
+                }*/
 
                 //text / image / audio  / video / gif / document / reaction / remove_reaction
                 switch (msg.getTypeOfMsg()) {
                     case "text" -> {
                         if (msg.getMessage() != null && !msg.getMessage().isEmpty())
-                            whatsappApi.sendMessage(chat, msg.getMessage());
+                            whatsappApi.sendMessage(contactJid, msg.getMessage());
                         else
                             log.info(" Missing required parameter message");
                     }
@@ -296,7 +305,7 @@ public class MessageService {
                                         .media(MediaUtils.readBytes(msg.getMediaUrl2()[k]))
                                         .caption(k == 0 ? msg.getCaption() : "")
                                         .build();
-                                whatsappApi.sendMessage(chat, image).join();
+                                whatsappApi.sendMessage(contactJid, image).join();
                                 if (msg.isLogRequired()) log.info("Sent image");
                             }
                         } else
@@ -312,7 +321,7 @@ public class MessageService {
                                         .fileName((k + 1) + msg.getFileName2()[k].substring(msg.getFileName2()[k].lastIndexOf(".")))
 //                              .pageCount(1)
                                         .build();
-                                whatsappApi.sendMessage(chat, document).join();
+                                whatsappApi.sendMessage(contactJid, document).join();
                                 if (msg.isLogRequired()) log.info("Sent document");
                             }
                         } else
@@ -326,7 +335,7 @@ public class MessageService {
                                         .media(MediaUtils.readBytes(msg.getMediaUrl2()[k]))
                                         .voiceMessage(true)
                                         .build();
-                                whatsappApi.sendMessage(chat, audio).join();
+                                whatsappApi.sendMessage(contactJid, audio).join();
                                 if (msg.isLogRequired()) log.info("Sent audio");
                             }
                         } else
@@ -339,7 +348,7 @@ public class MessageService {
                                 var video = VideoMessage.simpleVideoBuilder()
                                         .media(MediaUtils.readBytes(msg.getMediaUrl2()[k]))
                                         .caption(msg.getCaption()).build();
-                                whatsappApi.sendMessage(chat, video).join();
+                                whatsappApi.sendMessage(contactJid, video).join();
                                 if (msg.isLogRequired()) log.info("Sent video");
                             }
                         } else
@@ -352,7 +361,7 @@ public class MessageService {
                                 var video = VideoMessage.simpleGifBuilder()
                                         .media(MediaUtils.readBytes(msg.getMediaUrl2()[k]))
                                         .caption(msg.getCaption()).build();
-                                whatsappApi.sendMessage(chat, video).join();
+                                whatsappApi.sendMessage(contactJid, video).join();
                                 if (msg.isLogRequired()) log.info("Sent video");
                             }
                         } else
@@ -377,6 +386,10 @@ public class MessageService {
             }
 
         } catch (Exception e) {
+            if( message!=null ) {
+                message.setSendStatus("2");
+                updateMessageStatus(message);
+            }
             System.out.println("e = " + e.getMessage());
             return new ResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR,"Internal server error!" );
         }

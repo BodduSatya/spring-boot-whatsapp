@@ -69,7 +69,7 @@ export class SendMsgFormComponent {
     this.fileName = [];
     this.fileInput = event.target.files[0] as File;
 
-    if ( !event.target.files || event.target.files.length > 0 ) {
+    if ( !event.target.files || event.target.files.length === 0 ) {
       this.toast.showWarning('Warning!','No file selected')
       return;
     }
