@@ -13,9 +13,18 @@
         <input type="text" class="form-control" aria-describedby="phoneNumbers" name="phoneNumbers"
           placeholder="Eg: 919999999999" [(ngModel)]="phoneNumbers" />
       </div>
-      <div class="col-md-2">
+
+      <div class="col-md-2 input-group" style="width: 350px;">
+        <span class="input-group-text" id="msgStatus" style="width:135px;">Message Type</span>
+        <select class="form-select" [(ngModel)]="msgStatus" name="msgStatus" aria-describedby="msgStatus">
+          <option *ngFor="let i of msgStatusList" [value]="i.value">{{ i.label }}</option>
+        </select>
+      </div>
+
+      <div class="col-md-1">
         <a (click)="getMessages($event)" class="btn btn-primary" style="height: 40px;background-color: purple">
-          <i class="fa fa-search" aria-hidden="true"> </i>&nbsp;Get Messages
+          <i class="fa fa-search" aria-hidden="true"> </i>&nbsp;
+<!--          Get Messages-->
         </a>
       </div>
     </div>
@@ -98,4 +107,7 @@
     </div>
   </div>
 
+  <div class="container msg-container mt-5 mb-3" style="color:red;text-align: center" *ngIf="data.length == 0">
+        No Messages found with selected criteria.
+  </div>
 </div>

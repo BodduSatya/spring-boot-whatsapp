@@ -1,9 +1,10 @@
 import { Component, HostListener, ViewChild } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import {ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { LoaderComponent } from "./utils/loader/loader.component";
 import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 import { NgForOf, NgIf } from '@angular/common';
+import {filter} from "rxjs";
 
 @Component({
   selector: 'app-root',
@@ -25,8 +26,23 @@ export class AppComponent {
     if (this.datepicker)
       this.datepicker.hide();
   }
+  selectedTab:string = '';
+  constructor(private router: Router, private activatedRoute: ActivatedRoute) {
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.updateSelectedTab();
+    });
+    // Set initial tab
+    this.updateSelectedTab();
+  }
 
-  constructor() {
+  updateSelectedTab() {
+    const currentRoute = this.router.url;
+    const matchingTab = this.tabs.find(tab => tab.routePath === currentRoute);
+    if (matchingTab) {
+      this.selectedTab = matchingTab.tabName;
+    }
   }
 
   tabs = [
@@ -37,10 +53,8 @@ export class AppComponent {
     { tabName: 'About Us', routePath: '/about' }
   ];
 
-  selectedTab:string = this.tabs[this.tabs.length-1].tabName;
-
   selectTab(tab: any) {
-    this.selectedTab = tab.tabName;    
+    this.selectedTab = tab.tabName;
   }
 
 }

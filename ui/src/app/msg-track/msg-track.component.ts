@@ -34,19 +34,27 @@ export class MsgTrackComponent {
   itemsPerPageOptions: number[] = [5, 10, 20];
   data: any = [];
   processing: boolean = false;
-  datePickerValue: any;
+  datePickerValue: any=[new Date(),new Date()];
   fromDate: string = '';
   toDate: string = '';
   phoneNumbers: any = '';
   checkAll: any;
   selectedRecords: number = 0;
-
+  msgStatus:string ='-1';
+  msgStatusList:any =[];
   constructor(
     private service: AppService,
     private loader: LoaderService,
     private toast: ToastService,
   ) {
-
+    this.msgStatusList=[
+      {
+        label:'All', value:'-1'
+      },{
+        label:'Delivered', value:'1'
+      },{
+        label:'Not Delivered', value:'2'
+      }];
   }
 
   onDateChange(event: any): void {
@@ -106,8 +114,7 @@ export class MsgTrackComponent {
       return this.toast.showWarning("Warning!", 'please select Date Duration.');
     }
 
-    try {
-      this.service.getAllMessages(this.fromDate, this.toDate, this.phoneNumbers).subscribe((data: any) => {
+    this.service.getAllMessages(this.fromDate, this.toDate, this.phoneNumbers,this.msgStatus).subscribe((data: any) => {
         console.log(data);
         this.loader.setLoading(false);
         console.log(data.forEach((x: any) => console.log(x)));
@@ -120,10 +127,13 @@ export class MsgTrackComponent {
         this.filteredData = this.data || [];
         // this.data = data || [];
         this.calculateTotalPages();
+      },
+      error => {
+        console.log(error);
+        this.loader.setLoading(false);
+        this.toast.showError("Error!", error ? error.statusText : 'Something went wrong!');
       })
-    } catch (error) {
-      console.log(error);
-    }
+
   }
 
   handleCheckAll(e: any) {
@@ -195,7 +205,7 @@ export class MsgTrackComponent {
 
     if (mids.length === 0) {
       this.loader.setLoading(false);
-      return this.toast.showWarning("Warning!", 'please select atlease one message to proceed.');
+      return this.toast.showWarning("Warning!", 'Please select at least one message to proceed.');
     }
 
     try {

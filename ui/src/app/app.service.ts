@@ -30,8 +30,8 @@ export class AppService {
     return this.http.post(`${this.baseUrl}/api/sendMsg`, data);
   }
 
-  getAllMessages(fromDate: string, toDate: string, mobileNo: string) {
-    return this.http.get(`${this.baseUrl}/stats/getAllMessages?fromDate=${fromDate}&toDate=${toDate}&mobileNo=${mobileNo}`);
+  getAllMessages(fromDate: string, toDate: string, mobileNo: string,msgStatus:string) {
+    return this.http.get(`${this.baseUrl}/stats/getAllMessages?fromDate=${fromDate}&toDate=${toDate}&mobileNo=${mobileNo}&msgStatus=${msgStatus}`);
   }
 
   retrySendMessage(mids: any) {
