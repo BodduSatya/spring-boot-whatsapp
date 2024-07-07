@@ -28,7 +28,7 @@ public class SeverEventsController {
     public Flux<ResponseMessage> sendWAMessageV4(@RequestParam String fileName) throws IOException {
         List<MessageDTO> msgs = fileStorageService.readExcel(fileName);
         return Flux.fromIterable(msgs)
-                .map(messageService::sendMessageV2)
+                .map(messageService::sendMessageV3)
                 .delayElements(Duration.ofSeconds(5));
 
         /*List<MessageDTO> msgs = new ArrayList<>();

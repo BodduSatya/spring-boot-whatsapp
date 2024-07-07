@@ -4,12 +4,13 @@
 
 For further reference, please consider the following sections:
 
+### Build UI
+* ng build --configuration production
+
+### Package jar
 * mvn clean package -DskipTests
 
-### build UI
-* ng build --prod
-
-POST http://localhost:8086/api/sendMsg
+POST http://localhost:8086/api/sendMsgV3
 # Individual Contact
 {
     "toMobileNumber":"",

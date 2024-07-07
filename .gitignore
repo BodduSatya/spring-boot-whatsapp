@@ -28,6 +28,11 @@ target/
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
-
+/src/main/resources/**/public/
+/uploads/**
 ### VS Code ###
 .vscode/
+mvnw.cmd
+mvnw
+/logs/**
+package-lock.json

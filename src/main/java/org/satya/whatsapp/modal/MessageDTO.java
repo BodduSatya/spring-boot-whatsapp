@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Data
 @NoArgsConstructor
@@ -25,17 +26,33 @@ public class MessageDTO {
     private String[] fileName2;
 
     private String sendStatus;
-    private LocalDateTime createdon;
-    private LocalDateTime senton;
+    private String createdon;
+    private String senton;
 
     private boolean logRequired=false;
 
-    public MessageDTO(String toMobileNumber, String typeOfMsg, String message, String mediaUrl, String caption,String fileName) {
+    public MessageDTO(String toMobileNumber, String typeOfMsg, String message, String mediaUrl,
+                      String caption,String fileName) {
         this.toMobileNumber = toMobileNumber;
         this.typeOfMsg = typeOfMsg;
         this.message = message;
         this.mediaUrl = mediaUrl;
         this.caption = caption;
         this.fileName = fileName;
+    }
+
+    public MessageDTO(String toMobileNumber, String typeOfMsg, String message, String mediaUrl,
+                      String caption,String fileName,LocalDateTime createdon, LocalDateTime senton,long id,
+                      String sendStatus) {
+        this.toMobileNumber = toMobileNumber;
+        this.typeOfMsg = typeOfMsg;
+        this.message = message;
+        this.mediaUrl = mediaUrl;
+        this.caption = caption;
+        this.fileName = fileName;
+        this.createdon = createdon.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss.SSS")); // Adjust the pattern as needed
+        this.senton = senton.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss.SSS")); // Adjust the pattern as needed
+        this.id = id;
+        this.sendStatus = sendStatus;
     }
 }

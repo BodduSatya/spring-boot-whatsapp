@@ -16,7 +16,8 @@ public class WspController {
 
     @RequestMapping("/sendMsg")
     public ResponseMessage sendWAMessage(@RequestBody MessageDTO msg) {
-        return messageService.sendMessageV2(msg);
+//        return messageService.sendMessageV2(msg);
+        return messageService.sendMessageV3(msg);
     }
 
     @RequestMapping("/sendMsgV3")

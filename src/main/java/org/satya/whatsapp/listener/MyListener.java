@@ -9,12 +9,16 @@ import it.auties.whatsapp.model.contact.ContactJid;
 import it.auties.whatsapp.model.info.MessageInfo;
 import it.auties.whatsapp.model.message.standard.TextMessage;
 import it.auties.whatsapp.model.request.Node;
+import lombok.extern.slf4j.Slf4j;
 import org.satya.whatsapp.modal.MailRequest;
 import org.satya.whatsapp.service.EmailService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+@Slf4j
 @Service
 public class MyListener implements Listener {
 
@@ -46,17 +50,18 @@ public class MyListener implements Listener {
         try {
             // push email
             Map<String, Object> modal = new HashMap<>();
-            modal.put("name", "wa server disconnected with reason :: ");
+            modal.put("name", "wa server disconnected on "+ DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss a").format(LocalDateTime.now()) +" with reason :: ");
             modal.put("location", reason);
 
             MailRequest mailRequest = new MailRequest();
-            mailRequest.setTo("tt@sanharabs.com");
+            mailRequest.setTo("satyanarayana@sanharabs.com");
             mailRequest.setSubject("Wa disconnected ");
             mailRequest.setName("Satya");
             emailService.sendEmail(mailRequest, modal);
 
         }catch (Exception e){
-            System.out.println("e = " + e);
+            log.error(" Exception in onDisconnected() " , e);
+            System.out.println("Exception in onDisconnected() ==> " + e.getMessage());
         }
     }
 
@@ -67,26 +72,25 @@ public class MyListener implements Listener {
 
     @Override
     public void onNewMessage(Whatsapp w, MessageInfo info) {
-        System.out.printf("*** Message received... *** %s \n ", info.toJson());
+        //log.info("*** Message received... *** {} \n ", info.toJson());
 
         if (!(info.message().content() instanceof TextMessage textMessage)) {
             return;
         }
 
         /*
-        System.out.println("1 :" + info.senderJid().user()); //1 :919032429929 ( sender ph no )
+        System.out.println("1 :" + info.senderJid().user()); //1 :91xxxxxxxxxx ( sender ph no )
         System.out.println("2 :" + info.senderName());      //2  : contact name in whatsapp
-        System.out.println("3 :" + info.chatJid().user()); //3 :  919030530376 ( recipient ph no )
-        System.out.println("4 :" + info.chatJid().toPhoneNumber()); //4 :+919030530376
-        info.sender().ifPresent(contact -> System.out.println("5: " + contact.chosenName() + " " + contact.name() + " " + contact.jid())); //5: BVRao H M Garu 919032429929@s.whatsapp.net
+        System.out.println("3 :" + info.chatJid().user()); //3 :  91xxxxxxxxxx ( recipient ph no )
+        System.out.println("4 :" + info.chatJid().toPhoneNumber()); //4 :+91xxxxxxxxxx
+        info.sender().ifPresent(contact -> System.out.println("5: " + contact.chosenName() + " " + contact.name() + " " + contact.jid())); //5: name 91xxxxxxxxxx@s.whatsapp.net
         System.out.println("6: " + textMessage.text());    // 6: message text
-        System.out.println("7: " + info.chat().jid());   // 7: 919030530376@s.whatsapp.net
+        System.out.println("7: " + info.chat().jid());   // 7: 91xxxxxxxxxx@s.whatsapp.net
         */
 
-        System.out.println( info.chatJid().user() + " :: " + textMessage.text() );
+        System.out.println( "*** Message received from "+info.chatJid().user() );
 
         if(Arrays.asList(new String[]{"Hi","Hello","Hai","Hey"}).contains(textMessage.text())){
-            System.out.println("if = ");
             var chat = w.store()
                     .findChatByJid(ContactJid.of(info.chatJid().toPhoneNumber()))
                     .orElseThrow(() -> new NoSuchElementException("Hey," + info.chatJid().toPhoneNumber() + " not exist"));

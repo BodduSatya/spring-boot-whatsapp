@@ -1,26 +1,26 @@
 package org.satya.whatsapp.service;
 
 import it.auties.whatsapp.api.Whatsapp;
-import it.auties.whatsapp.model.chat.Chat;
 import it.auties.whatsapp.model.contact.ContactJid;
+import it.auties.whatsapp.model.info.MessageInfo;
 import it.auties.whatsapp.model.message.standard.*;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.satya.whatsapp.entity.Message;
 import org.satya.whatsapp.modal.MessageDTO;
 import org.satya.whatsapp.modal.ResponseMessage;
+import org.satya.whatsapp.repository.MessageCriteriaRepository;
 import org.satya.whatsapp.repository.MessageRepository;
 import org.satya.whatsapp.utils.MediaUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,31 +36,31 @@ public class MessageService {
     @Autowired
     private MessageRepository messageRepository;
 
-    public boolean saveMessage(Message message){
+    @Autowired
+    private MessageCriteriaRepository messageCriteriaRepository;
+
+    public void saveMessage(Message message){
         try {
             messageRepository.save(message);
         }catch (Exception e){
             System.out.println("saveMessage e = " + e);
         }
-        return true;
     }
 
-    public boolean updateMessageStatus(Message message){
+    public void updateMessageStatus(Message message){
         try {
             Optional<Message> savedMessage = messageRepository.findById(message.getId());
             if(savedMessage.isPresent()){
                 savedMessage.get().setSendStatus(message.getSendStatus());
                 savedMessage.get().setSenton(LocalDateTime.now());
                 messageRepository.save(savedMessage.get());
-                return true;
             }
         } catch (Exception e) {
             System.out.println("updateMessageStatus e = " + e);
         }
-        return false;
     }
 
-    public List<MessageDTO> getAllMessagesBetweenDates(String fromDate, String toDate, String mobileNo ) {
+    public List<MessageDTO> getAllMessagesBetweenDates(String fromDate, String toDate, String mobileNo,String msgStatus ) {
 
         fromDate = fromDate.contains(":")? fromDate : fromDate+" 00:00";
         toDate = toDate.contains(":")? toDate : toDate+" 23:59";
@@ -74,15 +74,32 @@ public class MessageService {
         log.info("From Date - {} To Date - {} ",from,to);
 
         List<Message> messages = null;
-        if( mobileNo!=null && !mobileNo.trim().isEmpty()){
-            messages = messageRepository.getAllMessagesBetweenDatesMobNo(from,to,mobileNo);
-        }
-        else{
-            messages = messageRepository.getAllMessagesBetweenDates(from,to);
-        }
+//        if( mobileNo!=null && !mobileNo.trim().isEmpty()){
+//            messages = messageRepository.getAllMessagesBetweenDatesMobNo(from,to,mobileNo);
+//        }
+//        else{
+//            messages = messageRepository.getAllMessagesBetweenDates(from,to);
+//        }
+        messages = messageCriteriaRepository.getMessagesBetweenDates(from,to,mobileNo,msgStatus);
+
+//        return messages.stream()
+//                .map((message)->modelMapper.map(message, MessageDTO.class))
+//                .collect(Collectors.toList());
+
         return messages.stream()
-                .map((message)->modelMapper.map(message, MessageDTO.class))
+                .map(message -> new MessageDTO(
+                        message.getToMobileNumber(),
+                        message.getTypeOfMsg(),
+                        message.getMessage(),
+                        message.getMediaUrl(),
+                        message.getCaption(),
+                        message.getFileName(),
+                        message.getCreatedon(),
+                        message.getSenton(),
+                        message.getId(),
+                        message.getSendStatus()))
                 .collect(Collectors.toList());
+
     }
 
     public List<MessageDTO> getAllNonSendMessagesBetweenDates(String fromDate, String toDate, String mobileNo ) {
@@ -125,7 +142,7 @@ public class MessageService {
                 .collect(Collectors.toList());
     }
 
-    public synchronized ResponseMessage sendMessageV2(MessageDTO msg){
+    /*public synchronized ResponseMessage sendMessageV2(MessageDTO msg){
         org.satya.whatsapp.entity.Message message = null;
         try {
             message = new org.satya.whatsapp.entity.Message(msg.getToMobileNumber(),msg.getMessage(),msg.getTypeOfMsg(),
@@ -137,7 +154,7 @@ public class MessageService {
             Chat chat = null;
             //ContactJid contactJid = null;
             ContactJid contactJid = ContactJid.of(msg.getToMobileNumber());
-            /*if(msg.isGroupMsg()) {
+            *//*if(msg.isGroupMsg()) {
                 chat = whatsappApi.store()
                         .findChatByJid(ContactJid.of(msg.getToMobileNumber()))
                         .filter(Chat::isGroup)
@@ -150,22 +167,25 @@ public class MessageService {
             }
             else{
                 contactJid = ContactJid.builder().server(ContactJid.Server.WHATSAPP).user(msg.getToMobileNumber()).build();
-                *//*chat = whatsappApi.store()
+                *//**//*chat = whatsappApi.store()
                         .findChatByJid(contactJid)
                         .orElseThrow(() -> {
                                     message.setSendStatus("2");
                                     updateMessageStatus(message);
                                     return new NoSuchElementException("Hey," + msg.getToMobileNumber() + " not exist");
                                 }
-                        );*//*
+                        );*//**//*
 
-            }*/
+            }*//*
 
+            CompletableFuture<MessageInfo> mi = null;
             //text / image / audio  / video / gif / document / reaction / remove_reaction
             switch (msg.getTypeOfMsg() ) {
                 case "text" -> {
-                    if( msg.getMessage()!=null && !msg.getMessage().isEmpty())
-                        whatsappApi.sendMessage(contactJid, msg.getMessage());
+                    if( msg.getMessage()!=null && !msg.getMessage().isEmpty()) {
+                        mi = whatsappApi.sendMessage(contactJid, msg.getMessage());
+                        System.out.println("mi = " + mi.join());
+                    }
                     else
                         log.info(" Missing required parameter message");
                 }
@@ -176,7 +196,7 @@ public class MessageService {
                                 .media(MediaUtils.readBytes(msg.getMediaUrl()))
                                 .caption(msg.getCaption())
                                 .build();
-                        whatsappApi.sendMessage(contactJid, image).join();
+                         whatsappApi.sendMessage(contactJid, image).join();
                         if( msg.isLogRequired()) log.info("Sent image");
                     }
                     else
@@ -245,56 +265,52 @@ public class MessageService {
 //            message.setSendStatus("2");
 //            updateMessageStatus(message);
             System.out.println("e = " + e.getMessage());
-            return new ResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR,"Failed! message sending failed to "+msg.getToMobileNumber() );
+            return new ResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR,"Message Send failed to "+msg.getToMobileNumber() );
         }
         return new ResponseMessage(HttpStatus.OK,"Message Sent to "+msg.getToMobileNumber() );
-    }
+    }*/
 
     public synchronized ResponseMessage sendMessageV3(MessageDTO msg){
         org.satya.whatsapp.entity.Message message = null;
+        String[] mobileNos = null;
         try {
-            String mobileNos[] = msg.getToMobileNumber().split(",");
+            mobileNos = msg.getToMobileNumber().split(",");
 
-            for( int i = 0; i < mobileNos.length; i++ ) {
+            for (String mobileNo : mobileNos) {
 
-                msg.setToMobileNumber(mobileNos[i]);
+                msg.setToMobileNumber(mobileNo);
 
-                message = new org.satya.whatsapp.entity.Message(msg.getToMobileNumber(), msg.getMessage(), msg.getTypeOfMsg(),
-                        LocalDateTime.now(),msg.getMediaUrl(),msg.getCaption(),msg.getId());
+                if ( !"text".equalsIgnoreCase(msg.getTypeOfMsg())
+                        && msg.getMediaUrl2() != null && msg.getMediaUrl2().length > 0 ) {
+                    for (int k = 0; k < msg.getMediaUrl2().length; k++) {
+                        message = new Message(msg.getToMobileNumber(), msg.getMessage(), msg.getTypeOfMsg(),
+                                LocalDateTime.now(), msg.getMediaUrl2()[k], k ==0 ? msg.getCaption() : "", msg.getId());
 
-                saveMessage(message);
+                        if( msg.getId() == 0 )
+                            saveMessage(message);
+                    }
+                }
+                else{
+                    message = new Message(msg.getToMobileNumber(), msg.getMessage(), msg.getTypeOfMsg(),
+                            LocalDateTime.now(), msg.getMediaUrl(), msg.getCaption(), msg.getId());
 
-//                Chat chat = null;
+                    if( msg.getId() == 0 )
+                        saveMessage(message);
+                }
+
                 ContactJid contactJid = ContactJid.of(msg.getToMobileNumber());
-                /*if (msg.isGroupMsg()) {
-                    contactJid = ContactJid.of(msg.getToMobileNumber());
-                    *//*chat = whatsappApi.store()
-                            .findChatByJid(ContactJid.of(msg.getToMobileNumber()))
-                            .filter(Chat::isGroup)
-                            .orElseThrow(() -> {
-                                        message.setSendStatus("2");
-                                        updateMessageStatus(message);
-                                        return new NoSuchElementException("Hey," + msg.getToMobileNumber() + " not exist");
-                                    }
-                            );*//*
-                } else {
-                     contactJid = ContactJid.builder().server(ContactJid.Server.WHATSAPP).user(msg.getToMobileNumber()).build();
-//                    chat = whatsappApi.store()
-//                            .findChatByJid(contactJid)
-//                            .orElseThrow(() -> {
-//                                        message.setSendStatus("2");
-//                                        updateMessageStatus(message);
-//                                        return new NoSuchElementException("Hey," + msg.getToMobileNumber() + " not exist");
-//                                    }
-//                            );
-                }*/
 
                 //text / image / audio  / video / gif / document / reaction / remove_reaction
+                Message finalMessage = message;
                 switch (msg.getTypeOfMsg()) {
                     case "text" -> {
-                        if (msg.getMessage() != null && !msg.getMessage().isEmpty())
-                            whatsappApi.sendMessage(contactJid, msg.getMessage());
-                        else
+                        if (msg.getMessage() != null && !msg.getMessage().isEmpty()) {
+                            CompletableFuture<MessageInfo> msgFuture = whatsappApi.sendMessage(contactJid, msg.getMessage());
+                            msgFuture.thenAccept(result -> {
+                                finalMessage.setSendStatus("SERVER_ACK".equalsIgnoreCase(result.status().name()) ? "1" : "2");
+                                updateMessageStatus(finalMessage);
+                            });
+                        } else
                             log.info(" Missing required parameter message");
                     }
                     case "image" -> {
@@ -305,7 +321,11 @@ public class MessageService {
                                         .media(MediaUtils.readBytes(msg.getMediaUrl2()[k]))
                                         .caption(k == 0 ? msg.getCaption() : "")
                                         .build();
-                                whatsappApi.sendMessage(contactJid, image).join();
+                                CompletableFuture<MessageInfo> msgFuture = whatsappApi.sendMessage(contactJid, image);
+                                msgFuture.thenAccept(result -> {
+                                    finalMessage.setSendStatus("SERVER_ACK".equalsIgnoreCase(result.status().name()) ? "1" : "2");
+                                    updateMessageStatus(finalMessage);
+                                });
                                 if (msg.isLogRequired()) log.info("Sent image");
                             }
                         } else
@@ -321,7 +341,13 @@ public class MessageService {
                                         .fileName((k + 1) + msg.getFileName2()[k].substring(msg.getFileName2()[k].lastIndexOf(".")))
 //                              .pageCount(1)
                                         .build();
-                                whatsappApi.sendMessage(contactJid, document).join();
+                                CompletableFuture<MessageInfo> msgFuture = whatsappApi.sendMessage(contactJid, document);
+                                System.out.println("msgFuture = " + msgFuture);
+                                msgFuture.thenAccept(result -> {
+                                    System.out.println("result = " + result);
+                                    finalMessage.setSendStatus("SERVER_ACK".equalsIgnoreCase(result.status().name()) ? "1" : "2");
+                                    updateMessageStatus(finalMessage);
+                                });
                                 if (msg.isLogRequired()) log.info("Sent document");
                             }
                         } else
@@ -335,7 +361,11 @@ public class MessageService {
                                         .media(MediaUtils.readBytes(msg.getMediaUrl2()[k]))
                                         .voiceMessage(true)
                                         .build();
-                                whatsappApi.sendMessage(contactJid, audio).join();
+                                CompletableFuture<MessageInfo> msgFuture = whatsappApi.sendMessage(contactJid, audio);
+                                msgFuture.thenAccept(result -> {
+                                    finalMessage.setSendStatus("SERVER_ACK".equalsIgnoreCase(result.status().name()) ? "1" : "2");
+                                    updateMessageStatus(finalMessage);
+                                });
                                 if (msg.isLogRequired()) log.info("Sent audio");
                             }
                         } else
@@ -348,7 +378,11 @@ public class MessageService {
                                 var video = VideoMessage.simpleVideoBuilder()
                                         .media(MediaUtils.readBytes(msg.getMediaUrl2()[k]))
                                         .caption(msg.getCaption()).build();
-                                whatsappApi.sendMessage(contactJid, video).join();
+                                CompletableFuture<MessageInfo> msgFuture = whatsappApi.sendMessage(contactJid, video);
+                                msgFuture.thenAccept(result -> {
+                                    finalMessage.setSendStatus("SERVER_ACK".equalsIgnoreCase(result.status().name()) ? "1" : "2");
+                                    updateMessageStatus(finalMessage);
+                                });
                                 if (msg.isLogRequired()) log.info("Sent video");
                             }
                         } else
@@ -361,7 +395,11 @@ public class MessageService {
                                 var video = VideoMessage.simpleGifBuilder()
                                         .media(MediaUtils.readBytes(msg.getMediaUrl2()[k]))
                                         .caption(msg.getCaption()).build();
-                                whatsappApi.sendMessage(contactJid, video).join();
+                                CompletableFuture<MessageInfo> msgFuture = whatsappApi.sendMessage(contactJid, video);
+                                msgFuture.thenAccept(result -> {
+                                    finalMessage.setSendStatus("SERVER_ACK".equalsIgnoreCase(result.status().name()) ? "1" : "2");
+                                    updateMessageStatus(finalMessage);
+                                });
                                 if (msg.isLogRequired()) log.info("Sent video");
                             }
                         } else
@@ -373,16 +411,16 @@ public class MessageService {
                     }
                 }
 
-                message.setSendStatus("1");
-                updateMessageStatus(message);
-
                 try {
                     // Sleep for 1 second (1000 milliseconds)
-                    Thread.sleep(3000);
+                    Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     // Handle interrupted exception
                     e.printStackTrace();
                 }
+
+//                System.out.println("finalMessage.getSendStatus() = " + finalMessage.getSendStatus());
+//                message.setSendStatus(finalMessage.getSendStatus());
             }
 
         } catch (Exception e) {
@@ -393,11 +431,17 @@ public class MessageService {
             System.out.println("e = " + e.getMessage());
             return new ResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR,"Internal server error!" );
         }
-        return new ResponseMessage(HttpStatus.OK,"Message Sent." );
+//        if( message!=null && "1".equalsIgnoreCase(message.getSendStatus()))
+        if(mobileNos.length==1)
+            return new ResponseMessage(HttpStatus.OK,"Message Sent to "+msg.getToMobileNumber() );
+        else
+            return new ResponseMessage(HttpStatus.OK,"Messages Sent Successfully." );
+//        else
+//            return new ResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR,"Message Send failed to "+msg.getToMobileNumber() );
     }
 
-    public synchronized ResponseMessage test(MessageDTO msg)  {
 
+    /*public synchronized ResponseMessage test(MessageDTO msg)  {
         System.out.println("service test() start"+msg.getToMobileNumber() );
         try {
             Thread.sleep(Duration.ofSeconds(3));
@@ -406,6 +450,7 @@ public class MessageService {
         }
         System.out.println("service test() end"+msg.getToMobileNumber() );
         return new ResponseMessage(HttpStatus.OK,"Message Sent."+msg.getToMobileNumber() );
-    }
+    }*/
+
 
 }

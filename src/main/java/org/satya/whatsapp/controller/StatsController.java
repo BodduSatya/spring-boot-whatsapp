@@ -33,8 +33,9 @@ public class StatsController {
     @GetMapping("/getAllMessages")
     public List<MessageDTO> getAllMessagesBetweenDates(@RequestParam String fromDate,
                                                        @RequestParam String toDate,
-                                                       @RequestParam String mobileNo ){
-        return messageService.getAllMessagesBetweenDates(fromDate,toDate,mobileNo);
+                                                       @RequestParam String mobileNo,
+                                                       @RequestParam String msgStatus){
+        return messageService.getAllMessagesBetweenDates(fromDate,toDate,mobileNo,msgStatus);
     }
 
     @GetMapping("/sendQueuedMessages")
@@ -51,7 +52,7 @@ public class StatsController {
         if(!queuedMessages.isEmpty()){
             log.info("$> Queued Messages Count {} ",queuedMessages.size());
             queuedMessages.forEach(m->{
-                messageService.sendMessageV2(m);
+                messageService.sendMessageV3(m);
                 if( "1".equalsIgnoreCase(m.getSendStatus()) )
                     success_count[0]++;
                 else
@@ -83,7 +84,7 @@ public class StatsController {
         if(!queuedMessages.isEmpty()){
             log.info("$> Queued Messages Count {} ",queuedMessages.size());
             queuedMessages.forEach(m->{
-                ResponseMessage responseMessage = messageService.sendMessageV2(m);
+                ResponseMessage responseMessage = messageService.sendMessageV3(m);
                 if( responseMessage.getStatus() == HttpStatus.OK )
                     success_count[0]++;
                 else
