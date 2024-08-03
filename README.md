@@ -10,7 +10,7 @@ For further reference, please consider the following sections:
 ### Package jar
 * mvn clean package -DskipTests
 
-POST http://localhost:8086/api/sendMsgV3
+POST http://localhost/api/sendMsgV3
 # Individual Contact
 {
     "toMobileNumber":"",
@@ -30,17 +30,17 @@ POST http://localhost:8086/api/sendMsgV3
     "groupMsg":true
 }
 
-![Screenshot 2024-05-02 081125](https://github.com/BodduSatya/spring-boot-whatsapp/assets/24984593/f77f1c29-815c-4a07-a01b-9fcd11d6b6ec)
+![image](https://github.com/user-attachments/assets/a28d3d63-12f5-47f1-ba2c-96ae54d7e416)
 
-![Screenshot 2024-05-02 081037](https://github.com/BodduSatya/spring-boot-whatsapp/assets/24984593/cac52a43-a378-4950-9501-9dde37319cfd)
+![image](https://github.com/user-attachments/assets/538bd7ad-7846-424d-b6f6-2bf5cfdf33d0)
 
-![Screenshot 2024-05-02 081053](https://github.com/BodduSatya/spring-boot-whatsapp/assets/24984593/8375bdc1-7d50-4f72-9681-bc1413b0b3c9)
+![image](https://github.com/user-attachments/assets/160edf36-4821-48bb-bc31-13b46e117427)
 
-![Screenshot 2024-05-02 081103](https://github.com/BodduSatya/spring-boot-whatsapp/assets/24984593/75604f18-bf30-4723-b32f-88379221be83)
+![image](https://github.com/user-attachments/assets/caf3407c-1832-4a11-aa7a-c57b7910a4cc)
 
-![Screenshot 2024-05-02 081113](https://github.com/BodduSatya/spring-boot-whatsapp/assets/24984593/cf9e4b23-002e-4d87-8d53-cd21af38b43a)
+![image](https://github.com/user-attachments/assets/80832772-cc68-413e-947d-b326ccba9257)
 
-
+![image](https://github.com/user-attachments/assets/45153f2b-847c-49c0-9e79-fd605d76fb1f)
 
 ### Build the Docker Image
 docker build -t WhatsApp:latest .
