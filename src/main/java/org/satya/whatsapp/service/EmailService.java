@@ -18,15 +18,15 @@ import java.util.Map;
 @Service
 public class EmailService {
 
-    @Autowired
-    private JavaMailSender sender;
-
-    @Autowired
-    private Configuration config;
+//    @Autowired
+//    private JavaMailSender sender;
+//
+//    @Autowired
+//    private Configuration config;
 
     public MailResponse sendEmail(MailRequest mailReq, Map<String,Object> modal){
         MailResponse response = null;
-        MimeMessage mimeMessage = sender.createMimeMessage();
+        /*MimeMessage mimeMessage = sender.createMimeMessage();
         try{
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage,
                     MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
@@ -46,7 +46,7 @@ public class EmailService {
         }catch (Exception e){
             System.out.println("e = " + e);
             response = new MailResponse("mail sending failed :"+e.getMessage(),Boolean.FALSE);
-        }
+        }*/
         return response;
 
     }
