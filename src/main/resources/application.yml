@@ -1,19 +1,10 @@
 wa:
   config:
     dir: "D://whatsapp4j/data"
-
-server:
-  port: 8086
+  notificationMailID: "bvvsnc3@gmail.com"
 
 openai:
   model: gpt-3.5-turbo
   api:
     url: https://api.openai.com
     key: <OPEN-API-KEY>
-
-logging:
-  level:
-    root: INFO
-  file:
-    name: logs/app.log
-    path: logs

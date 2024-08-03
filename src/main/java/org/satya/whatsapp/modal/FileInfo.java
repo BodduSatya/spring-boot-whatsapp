@@ -13,5 +13,6 @@ public class FileInfo {
     private long size;
     private String createdDate;
     private String filePath;
+    private String formattedSize;
 
 }

@@ -16,16 +16,16 @@ POST http://localhost:8086/api/sendMsgV3
     "toMobileNumber":"",
     "typeOfMsg":"",
     "message":"",
-    "mediaUrl":"",
+    "mediaUrl2":"",
     "caption":""
 }
 
 # Group message :
 {
-    "toMobileNumber":"120363262647235231@g.us",
+    "toMobileNumber":"xxxxxxxxxxxxxx@g.us",
     "typeOfMsg":"text",
-    "message":"sssss",
-    "mediaUrl":"",
+    "message":"Hi",
+    "mediaUrl2":"",
     "caption":"hello",
     "groupMsg":true
 }
@@ -42,7 +42,11 @@ POST http://localhost:8086/api/sendMsgV3
 
 
 
+### Build the Docker Image
+docker build -t WhatsApp:latest .
 
+### Run the Docker Container
+docker run -p 8080:8080 WhatsApp:latest
 
 
 

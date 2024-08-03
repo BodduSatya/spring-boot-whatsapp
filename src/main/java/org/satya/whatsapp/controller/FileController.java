@@ -1,11 +1,11 @@
 package org.satya.whatsapp.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.satya.whatsapp.modal.FileInfo;
 import org.satya.whatsapp.modal.UploadFileResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -30,7 +30,7 @@ import org.satya.whatsapp.service.FileStorageService;
 @CrossOrigin
 public class FileController {
 
-    private static final Logger logger = LoggerFactory.getLogger(FileController.class);
+    private static final Logger logger = LogManager.getLogger(FileController.class);
 
     @Value("${spring.servlet.multipart.max-file-size}")
     private String maxFileSize;

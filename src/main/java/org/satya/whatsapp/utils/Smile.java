@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.smile.databind.SmileMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import it.auties.map.SimpleMapModule;
+//import it.auties.map.SimpleMapModule;
 import lombok.experimental.UtilityClass;
 
 import java.io.IOException;
@@ -28,7 +28,7 @@ public class Smile {
         try {
             SMILE = new SmileMapper()
                     .registerModule(new Jdk8Module())
-                    .registerModule(new SimpleMapModule())
+//                    .registerModule(new SimpleMapModule())
                     .registerModule(new JavaTimeModule())
                     .setSerializationInclusion(NON_DEFAULT)
                     .enable(WRITE_ENUMS_USING_INDEX)

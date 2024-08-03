@@ -8,7 +8,8 @@ import { environment } from '../environments/environment';
 export class AppService {
 
   constructor(private http: HttpClient) { }
-  baseUrl: string = environment.apiUrl
+  // baseUrl: string = environment.apiUrl
+  baseUrl: string = '';
 
   sendMessage(data: any) {
     return this.http.post(`${this.baseUrl}/api/sendMsgV3`, data);

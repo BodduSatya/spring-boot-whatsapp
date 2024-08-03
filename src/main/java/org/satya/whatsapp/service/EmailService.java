@@ -24,7 +24,7 @@ public class EmailService {
     @Autowired
     private Configuration config;
 
-    public MailResponse sendEmail(MailRequest request, Map<String,Object> modal){
+    public MailResponse sendEmail(MailRequest mailReq, Map<String,Object> modal){
         MailResponse response = null;
         MimeMessage mimeMessage = sender.createMimeMessage();
         try{
@@ -38,11 +38,11 @@ public class EmailService {
             String html = FreeMarkerTemplateUtils.processTemplateIntoString(t,modal);
 
             helper.setText(html,true);
-            helper.setTo(request.getTo());
-            helper.setSubject(request.getSubject());
+            helper.setTo(mailReq.getTo());
+            helper.setSubject(mailReq.getSubject());
             sender.send(mimeMessage);
 
-            response = new MailResponse("mail send to :"+request.getTo(),Boolean.TRUE);
+            response = new MailResponse("mail send to :"+mailReq.getTo(),Boolean.TRUE);
         }catch (Exception e){
             System.out.println("e = " + e);
             response = new MailResponse("mail sending failed :"+e.getMessage(),Boolean.FALSE);

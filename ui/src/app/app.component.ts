@@ -57,4 +57,12 @@ export class AppComponent {
     this.selectedTab = tab.tabName;
   }
 
+  logout() {
+    // Add your logout logic here (e.g., remove tokens, call API, etc.)
+    // this.router.navigate(['/logout']).then(r => {
+    //
+    // });
+    window.location.href='/logout';
+  }
+
 }

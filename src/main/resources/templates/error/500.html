@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTTP Error Pages</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .error-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #666;
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+        .error-code {
+            font-size: 6em;
+            color: #dc3545;
+            margin-bottom: 20px;
+        }
+        .error-description {
+            font-size: 1.5em;
+            margin-bottom: 30px;
+        }
+        .error-suggestion {
+            font-size: 1em;
+            color: #999;
+        }
+        .error-container a {
+            color: #007bff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div class="error-container">
+    <div>
+        <h1 class="error-code">500</h1>
+        <div class="error-description">
+            <p>Internal Server Error.</p>
+        </div>
+        <div class="error-suggestion">
+            <p>Refresh the page or try again later.</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

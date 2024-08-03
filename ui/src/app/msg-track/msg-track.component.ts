@@ -6,6 +6,11 @@ import { BsDatepickerModule, BsDatepickerConfig } from 'ngx-bootstrap/datepicker
 import { AppService } from '../app.service';
 import { LoaderService } from '../utils/loader/loader.service';
 import { ToastService } from '../utils/toast/toast.service';
+import { BsLocaleService } from 'ngx-bootstrap/datepicker';
+import { defineLocale } from 'ngx-bootstrap/chronos';
+import { enGbLocale } from 'ngx-bootstrap/locale';
+
+defineLocale('en-gb', enGbLocale);
 
 @Component({
   selector: 'app-msg-track',
@@ -28,10 +33,10 @@ export class MsgTrackComponent {
   filteredData: any[] = [];
   headers: string[] = [];
   searchText: string = '';
-  itemsPerPage: number = 10;
+  itemsPerPage: number = 50;
   currentPage: number = 1;
   totalPagesArray: number[] = [];
-  itemsPerPageOptions: number[] = [5, 10, 20];
+  itemsPerPageOptions: number[] = [5, 10, 20, 50, 100];
   data: any = [];
   processing: boolean = false;
   datePickerValue: any=[new Date(),new Date()];
@@ -46,7 +51,9 @@ export class MsgTrackComponent {
     private service: AppService,
     private loader: LoaderService,
     private toast: ToastService,
+    private localeService: BsLocaleService
   ) {
+    this.localeService.use('en-gb'); // Set locale to 'en-gb' for DD/MM/YYYY format
     this.msgStatusList=[
       {
         label:'All', value:'-1'

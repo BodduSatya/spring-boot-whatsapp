@@ -6,7 +6,7 @@
         <span class="input-group-text" id="dateduration" style="width:135px;">Date Duration</span>
         <input type="text" placeholder="Select Date Duration" class="form-control" bsDaterangepicker
           (bsValueChange)="onDateChange($event)" [bsValue]="datePickerValue"
-          [bsConfig]="{ isAnimated: true,dateInputFormat: 'DD/MM/YYYY' }">
+          [bsConfig]="{ isAnimated: true, dateInputFormat: 'DD/MM/YYYY' }">
       </div>
       <div class="col-md-2 input-group" style="width: 350px;">
         <span class="input-group-text" id="phoneNumbers" style="width:135px;">Phone Number</span>
@@ -24,7 +24,6 @@
       <div class="col-md-1">
         <a (click)="getMessages($event)" class="btn btn-primary" style="height: 40px;background-color: purple">
           <i class="fa fa-search" aria-hidden="true"> </i>&nbsp;
-<!--          Get Messages-->
         </a>
       </div>
     </div>
@@ -43,7 +42,7 @@
         <p *ngIf="selectedRecords>0"><strong>Selected Records:</strong> {{ selectedRecords }}</p>
       </div>
 
-      <div class="col-md-4 d-flex justify-content-end mt-3">
+      <div class="col-md-4 d-flex justify-content-end mt-3" *ngIf="selectedRecords>0">
         <a (click)="confirmMessage($event)" class="btn btn-primary" style="height: 40px;">
           <i class="fa fa-paper-plane" aria-hidden="true"> </i>&nbsp;Send
         </a>

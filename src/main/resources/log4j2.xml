@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="logFileName">D://whatsapp4j/logs/app.log</Property>
+        <Property name="logPattern">%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${logPattern}"/>
+        </Console>
+
+        <RollingFile name="RollingFileAppender" fileName="${logFileName}"
+                     filePattern="${logFileName}-%d{yyyy-MM-dd}-%i.log.gz" createOnDemand="true">
+            <PatternLayout pattern="${logPattern}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFileAppender"/>
+        </Root>
+
+        <Logger name="org.satya" level="debug" additivity="false">
+<!--            <AppenderRef ref="Console"/>-->
+            <AppenderRef ref="RollingFileAppender"/>
+        </Logger>
+
+<!--        <Logger name="org.hibernate.SQL" level="debug" additivity="false">-->
+<!--            <AppenderRef ref="RollingFileAppender"/>-->
+<!--        </Logger>-->
+
+    </Loggers>
+</Configuration>

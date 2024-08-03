@@ -107,11 +107,26 @@ public class FileStorageService {
                 return filesList;
             }
 
+            // Sort files by creation date in descending order
+            Arrays.sort(files, new Comparator<File>() {
+                public int compare(File f1, File f2) {
+                    try {
+                        BasicFileAttributes attr1 = Files.readAttributes(f1.toPath(), BasicFileAttributes.class);
+                        BasicFileAttributes attr2 = Files.readAttributes(f2.toPath(), BasicFileAttributes.class);
+                        return attr2.creationTime().compareTo(attr1.creationTime());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return 0;
+                    }
+                }
+            });
+
             for (File file : files) {
                 BasicFileAttributes attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
                 long size = attr.size();
+                String formattedSize = formatSize(size);
                 Date createdDate = new Date(attr.creationTime().toMillis());
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
                 String formattedDate = dateFormat.format(createdDate);
 
                 String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -119,13 +134,23 @@ public class FileStorageService {
                         .path(file.getName())
                         .toUriString();
 
-                FileInfo fileInfo = new FileInfo(file.getName(), size, formattedDate, fileDownloadUri);
+                FileInfo fileInfo = new FileInfo(file.getName(), size, formattedDate, fileDownloadUri,formattedSize);
                 filesList.add(fileInfo);
             }
         } catch (Exception e) {
             System.out.println("e = " + e);
         }
         return filesList;
+    }
+
+    private String formatSize(long size) {
+        if (size >= 1024 * 1024) {
+            return String.format("%.2f MB", size / (1024.0 * 1024.0));
+        } else if (size >= 1024) {
+            return String.format("%.2f KB", size / 1024.0);
+        } else {
+            return String.format("%d bytes", size);
+        }
     }
 
     public List<MessageDTO> readExcel(String srcFileName) throws IOException {

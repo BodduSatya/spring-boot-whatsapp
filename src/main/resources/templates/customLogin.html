@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body {
+            color: #000;
+            overflow-x: hidden;
+            /*height: 100%;*/
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            width: 800px;
+            height: 500px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            animation: fadeIn 1s ease-in-out;
+            background-color: #fff;
+        }
+
+        .left-side {
+            width: 50%;
+            background: url('/images/login-left.jpg') no-repeat center center;
+            background-size: cover;
+            animation: slide 15s infinite alternate;
+        }
+
+        @keyframes slide {
+            0% { background-position: center center; }
+            100% { background-position: top left; }
+        }
+
+        .right-side {
+            width: 50%;
+            background: #fff;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .btn-custom {
+            background-color: #1A237E;
+            color: #fff;
+            border-radius: 25px;
+            padding: 10px;
+            width: 100%;
+        }
+
+        .btn-custom:hover {
+            background-color: #000;
+            color: white;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .social-icons .fa {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .social-icons .fa:hover {
+            color: #1A237E;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .divider::before {
+            margin-right: 10px;
+        }
+
+        .divider::after {
+            margin-left: 10px;
+        }
+        .error-message {
+            color: red;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        button {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            background-color: #1e7e34;
+            transform: translateY(0);
+        }
+
+        .form-control .input-group{
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="left-side"></div>
+    <div class="right-side">
+        <h3 class="text-center" style="margin-top:5px;margin-bottom: 5px;">Sign In</h3>
+
+        <div class="error-message" id="error-message">
+            Invalid username or password.
+        </div>
+
+        <form action="/login" method="post">
+            <div class="form-group">
+                <label for="username">User Name</label>
+                <input type="text" class="form-control" id="username" name="username" placeholder="Enter User Name">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter password">
+            </div>
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="remember">
+                <label class="form-check-label" for="remember">Remember me</label>
+            </div>
+            <button type="submit" class="btn btn-custom">Login</button>
+        </form>
+        <div class="social-icons">
+            <i class="fa fa-facebook"></i>
+            <i class="fa fa-twitter"></i>
+            <i class="fa fa-linkedin"></i>
+        </div>
+        <div class="divider">OR</div>
+        <p class="text-center">Don't have an account? <a href="#" class="text-primary">Register</a></p>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" defer></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" defer></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var params = new URLSearchParams(window.location.search);
+        if (params.has('error')) {
+            document.getElementById('error-message').style.display = 'block';
+        }
+        document.getElementById("username").focus();
+    });
+
+</script>
+</body>
+</html>

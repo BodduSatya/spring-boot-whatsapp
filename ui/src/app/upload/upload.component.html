@@ -1,20 +1,17 @@
-
-<div class="container card msg-container mt-1">
+<!-- <div class="container card msg-container mt-1">
   <h3 class="text-center mt-2 mb-3 rainbow-text">Upload Files for WhatsApp Sender</h3>
   <div class="row mt-2 mb-5" style="align-self: center;">
-    <div class="col-md-12 input-group" style="width: 600px;align-self: center;" >
-      <input class="form-control" type="file" #fileInput_el aria-describedby="fileUpload" (change)="onFileSelected($event)" multiple [accept]="fileExtensions()">
+    <div class="col-md-12 input-group" style="width: 600px;align-self: center;">
+      <input class="form-control" type="file" #fileInput_el aria-describedby="fileUpload"
+        (change)="onFileSelected($event)" multiple [accept]="fileExtensions()">
     </div>
-<!--    <div class="col-md-6 mb-3 input-group " >-->
-<!--      &nbsp;-->
-<!--    </div>-->
   </div>
 
   <div class="container" *ngIf="data.length > 0">
     <div class="row">
       <div class="col-md-6">
         <input type="text" class="form-control mt-3" placeholder="Search" [(ngModel)]="searchText"
-               (ngModelChange)="filterData()">
+          (ngModelChange)="filterData()">
       </div>
 
     </div>
@@ -22,20 +19,20 @@
       <div class="col-md-12">
         <table class="table">
           <thead>
-          <tr>
-            <th>File Name</th>
-            <th>Size(bytes)</th>
-            <th>Upload On</th>
-            <th>File Path</th>
-          </tr>
+            <tr>
+              <th>File Name</th>
+              <th>Size(bytes)</th>
+              <th>Upload On</th>
+              <th>File Path</th>
+            </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let row of filteredData | slice: (currentPage - 1) * itemsPerPage : currentPage * itemsPerPage">
-            <td>{{ row?.name }}</td>
-            <td>{{ row?.size }}</td>
-            <td>{{ row?.createdDate }}</td>
-            <td>{{ row?.filePath }}</td>
-          </tr>
+            <tr *ngFor="let row of filteredData | slice: (currentPage - 1) * itemsPerPage : currentPage * itemsPerPage">
+              <td>{{ row?.name }}</td>
+              <td>{{ row?.size }}</td>
+              <td>{{ row?.createdDate }}</td>
+              <td>{{ row?.filePath }}</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -47,7 +44,8 @@
             <a class="page-link" (click)="changePage(page)">{{ page }}</a>
           </li>
           <li>
-            <select class="form-select" style="margin-left: 30px; width: 75px;" [(ngModel)]="itemsPerPage" (change)="changeItemsPerPage()">
+            <select class="form-select" style="margin-left: 30px; width: 75px;" [(ngModel)]="itemsPerPage"
+              (change)="changeItemsPerPage()">
               <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}</option>
             </select>
           </li>
@@ -60,6 +58,72 @@
     <div class="row">
       <p style="text-align: center;color: gray"><strong>No uploaded files here!</strong></p>
     </div>
+  </div>
+
+</div> -->
+
+
+<div class="container card msg-container mt-1">
+  <h3 class="text-center mt-2 mb-3 rainbow-text">Upload Files for WhatsApp Sender</h3>
+  <div class="row mt-2 mb-5" style="align-self: center;">
+    <div class="col-md-12 input-group" style="width: 600px;align-self: center;">
+      <input class="form-control" type="file" #fileInput_el aria-describedby="fileUpload"
+        (change)="onFileSelected($event)" multiple [accept]="fileExtensions()">
+    </div>
+  </div>
+
+  <div class="container card msg-container mt-1 mb-3" *ngIf="data?.length > 0">
+    <div class="row">
+      <div class="col-md-4">
+        <input type="text" class="form-control mt-3" placeholder="Search" [(ngModel)]="searchText"
+          (ngModelChange)="filterData()">
+      </div>
+      <div class="col-md-2 mt-3">
+        <p><strong>Total Records:</strong> {{ data?.length }}</p>
+      </div>
+       
+    </div>
+    <div class="row mt-3">
+      <div class="col-md-12 table-responsive">
+        <table class="table table-striped table-bordered table-hover table-dark" style="table-layout: fixed; width: 100%;">
+          <thead>
+            <tr>
+              <th style="color: yellow;width: 200px;text-align:center;">File Name</th>
+              <th style="color: yellow;width: 50px;text-align:center;">Size</th>
+              <th style="color: yellow;width: 90px;text-align:center;">Upload On</th>
+              <th style="color: yellow;width: 300px;text-align:center;">File Path</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of filteredData | slice: (currentPage - 1) * itemsPerPage : currentPage * itemsPerPage">
+              <td>{{ row.name }}</td>
+              <td style="text-align: right;">{{ row.formattedSize }}</td>
+              <td>{{ row.createdDate }}</td>
+              <td>{{ row.filePath }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <ul class="pagination" style="overflow-x: auto;">
+          <li style="margin-right: 15px; width: 75px;">
+            <select class="form-select" style="width: 75px;" [(ngModel)]="itemsPerPage"
+              (change)="changeItemsPerPage()">
+              <option *ngFor="let option of itemsPerPageOptions" [value]="option">{{ option }}</option>
+            </select>
+          </li>
+          <li class="page-item" *ngFor="let page of totalPagesArray" [class.active]="currentPage === page">
+            <a class="page-link" (click)="changePage(page)">{{ page }}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="container msg-container mt-5 mb-3" style="color:red;text-align: center" *ngIf="data.length == 0">
+    No uploaded files here!
   </div>
 
 </div>

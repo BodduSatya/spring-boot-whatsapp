@@ -1,6 +1,7 @@
 package org.satya.whatsapp.controller;
 
-import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.satya.whatsapp.modal.MessageDTO;
 import org.satya.whatsapp.modal.ResponseMessage;
 import org.satya.whatsapp.service.MessageService;
@@ -15,20 +16,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 @RestController
 @CrossOrigin
 @RequestMapping("/stats")
 public class StatsController {
 
+    private static final Logger log = LogManager.getLogger(StatsController.class);
+
     @Autowired
     private MessageService messageService;
-
-//    @GetMapping("/sendMsg")
-//    public String hello(MessageDTO message, Model model) {
-//        model.addAttribute("message", message);
-//        return "SendMsg";
-//    }
 
     @GetMapping("/getAllMessages")
     public List<MessageDTO> getAllMessagesBetweenDates(@RequestParam String fromDate,

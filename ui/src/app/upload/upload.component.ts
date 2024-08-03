@@ -28,10 +28,10 @@ export class UploadComponent {
   filteredData: any[]=[];
   headers: string[]=[];
   searchText: string = '';
-  itemsPerPage: number = 10;
+  itemsPerPage: number = 50;
   currentPage: number = 1;
   totalPagesArray: number[]=[];
-  itemsPerPageOptions: number[] = [5, 10, 20];
+  itemsPerPageOptions: number[] = [5, 10, 20,50,100];
   @ViewChild('fileInput_el') fileInput_el: ElementRef | undefined;
   message: string='';
 

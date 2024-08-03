@@ -47,6 +47,7 @@ public class MessageCriteriaRepository {
         }
 
         cq.distinct(true).where(predicates.toArray(new Predicate[0]));
+        cq.orderBy(cb.desc(message.get("createdon")));
 
         return entityManager.createQuery(cq).getResultList();
     }

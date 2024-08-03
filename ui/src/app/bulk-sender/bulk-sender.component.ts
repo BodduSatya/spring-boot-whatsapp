@@ -237,6 +237,7 @@ export class BulkSenderComponent {
         "typeOfMsg": typeOfMsg,
         "message": message,
         "mediaUrl": mediaUrl,
+        "mediaUrl2": mediaUrl,
         "caption": caption,
         "fileName": mediaUrl ? fileName : mediaUrl.substring(mediaUrl.lastIndexOf('/') + 1)
       }
