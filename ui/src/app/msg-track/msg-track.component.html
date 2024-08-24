@@ -46,8 +46,11 @@
         <a (click)="confirmMessage($event)" class="btn btn-primary" style="height: 40px;">
           <i class="fa fa-paper-plane" aria-hidden="true"> </i>&nbsp;Send
         </a>
-        <a (click)="resetForm()" class="btn btn-danger" style="margin-left: 10px;height: 40px;">
+        <a (click)="resetForm()" class="btn btn-info" style="margin-left: 10px;height: 40px;">
           <i class="fa fa-eraser" aria-hidden="true"> </i>&nbsp;Reset
+        </a>
+        <a (click)="deleteMessage($event)" class="btn btn-danger" style="margin-left: 10px;height: 40px;">
+          <i class="fa fa-trash" aria-hidden="true"> </i>&nbsp;Delete
         </a>
       </div>
 
@@ -72,7 +75,8 @@
           <tbody>
             <tr *ngFor="let row of filteredData | slice: (currentPage - 1) * itemsPerPage : currentPage * itemsPerPage">
               <td>
-                <input type="checkbox" [(ngModel)]="row.checked" *ngIf="row.sendStatus!=='1'"
+                <!-- *ngIf="row.sendStatus!=='1'" -->
+                <input type="checkbox" [(ngModel)]="row.checked"
                   (ngModelChange)="handleCheck($event)" />
               </td>
               <td>{{ row.id }}</td>

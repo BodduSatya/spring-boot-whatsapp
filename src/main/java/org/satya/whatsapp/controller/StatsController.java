@@ -80,6 +80,8 @@ public class StatsController {
         if(!queuedMessages.isEmpty()){
             log.info("$> Queued Messages Count {} ",queuedMessages.size());
             queuedMessages.forEach(m->{
+                m.setMediaUrl2(new String[]{m.getMediaUrl()});
+                m.setFileName2(new String[]{m.getFileName()});
                 ResponseMessage responseMessage = messageService.sendMessageV3(m);
                 if( responseMessage.getStatus() == HttpStatus.OK )
                     success_count[0]++;
@@ -103,5 +105,17 @@ public class StatsController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @DeleteMapping("/deleteMessagesByMID")
+    public ResponseEntity<?> deleteMessagesByMID(@RequestBody String[] mids){
+        int deletedRecords = messageService.deleteMessages(mids);
+        Map<String, Object> response = new HashMap<>();
+        response.put("total_messages", mids.length);
+        response.put("success_count", deletedRecords);
+        response.put("failure_count", mids.length-deletedRecords);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 
 }

@@ -48,5 +48,8 @@ docker build -t WhatsApp:latest .
 ### Run the Docker Container
 docker run -p 8080:8080 WhatsApp:latest
 
+### h2 commands
+SHOW COLUMNS FROM MESSAGES;
 
-
+### API Docs
+http://localhost:8086/swagger-ui.html

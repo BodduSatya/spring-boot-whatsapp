@@ -8,6 +8,7 @@ import it.auties.whatsapp.model.chat.Chat;
 import it.auties.whatsapp.model.info.MessageInfo;
 import it.auties.whatsapp.model.jid.Jid;
 import it.auties.whatsapp.model.message.standard.*;
+import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -42,6 +44,7 @@ public class MessageService {
         this.messageCriteriaRepository = messageCriteriaRepository;
     }
 
+    @Transactional
     public synchronized ResponseMessage sendMessageV3(MessageDTO msg){
         Message message = null;
         String[] mobileNos = null;
@@ -54,7 +57,9 @@ public class MessageService {
                         && msg.getMediaUrl2() != null && msg.getMediaUrl2().length > 0 ) {
                     for (int k = 0; k < msg.getMediaUrl2().length; k++) {
                         message = new Message(msg.getToMobileNumber(), msg.getMessage(), msg.getTypeOfMsg(),
-                                LocalDateTime.now(), msg.getMediaUrl2()[k], k ==0 ? msg.getCaption() : "", msg.getId());
+                                LocalDateTime.now(), msg.getMediaUrl2()[k], k ==0 ? msg.getCaption() : "", msg.getId(),
+                                msg.getFileName2()[k]
+                        );
 
                         if( msg.getId() == 0 )
                             saveMessage(message);
@@ -62,7 +67,7 @@ public class MessageService {
                 }
                 else{
                     message = new Message(msg.getToMobileNumber(), msg.getMessage(), msg.getTypeOfMsg(),
-                            LocalDateTime.now(), msg.getMediaUrl(), msg.getCaption(), msg.getId());
+                            LocalDateTime.now(), msg.getMediaUrl(), msg.getCaption(), msg.getId(),"");
 
                     if( msg.getId() == 0 )
                         saveMessage(message);
@@ -104,8 +109,9 @@ public class MessageService {
 
                                 var image = new ImageMessageSimpleBuilder()
                                         .media(MediaUtils.readBytes(msg.getMediaUrl2()[k]))
-//                                        .thumbnail(MediaUtils.readBytes(msg.getMediaUrl2()[k]))
+//                                        .thumbnail(mediabytes)
                                         .caption(k == 0 ? msg.getCaption() : "")
+//                                        .mimeType("image/png")
                                         .build();
 
                                 var messageInfo = whatsappApi.sendMessage(chat!=null ? chat : contactJid, image).join();
@@ -123,7 +129,7 @@ public class MessageService {
                                 var document = new DocumentMessageSimpleBuilder()
                                         .media(MediaUtils.readBytes(msg.getMediaUrl2()[k]))
                                         .title(k == 0 ? msg.getCaption() : "")
-                                        .fileName((k + 1) + msg.getFileName2()[k].substring(msg.getFileName2()[k].lastIndexOf(".")))
+                                        .fileName( msg.getFileName2()[k] )
 //                              .pageCount(1)
                                         .build();
                                 var messageInfo = whatsappApi.sendMessage(chat!=null ? chat : contactJid, document).join();
@@ -195,7 +201,7 @@ public class MessageService {
             }
             System.out.println("Exception in MessageService.sendMessageV3() ==>> " + e.getMessage());
 //            e.printStackTrace();
-            return new ResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR,"Internal server error!" );
+            return new ResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR,e.getMessage() );
         }
         if(mobileNos.length==1)
             return new ResponseMessage(HttpStatus.OK,"Message Sent to "+msg.getToMobileNumber() );
@@ -204,6 +210,28 @@ public class MessageService {
     }
 
     public void saveMessage(Message message){
+        long count ;
+
+        if( "text".equalsIgnoreCase(message.getTypeOfMsg()) ) {
+            count = messageRepository.countByMessageText(
+                    message.getMessage() != null ? message.getMessage().trim().toUpperCase() : "",
+                    message.getToMobileNumber(),
+                    message.getCreatedonDate()
+            );
+        }
+        else{
+            count = messageRepository.countByMediaUrl(
+                    message.getMediaUrl() != null ? message.getMediaUrl().trim().toUpperCase() : "",
+                    message.getToMobileNumber(),
+                    message.getCreatedonDate()
+            );
+        }
+
+//        System.out.println("count = " + count);
+        if (count > 0) {
+            throw new RuntimeException("Duplicate message with in the same day & same contact not allowed.");
+        }
+
         try {
             messageRepository.save(message);
         }catch (Exception e){
@@ -221,6 +249,7 @@ public class MessageService {
             }
         } catch (Exception e) {
             System.out.println("updateMessageStatus e = " + e);
+            log.error("Failed to update message status in updateMessageStatus() = ", e);
         }
     }
 
@@ -329,6 +358,30 @@ public class MessageService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public int deleteMessages(String[] mids){
+        try {
+            List<Long> longArray = convertIterableStringToLong(mids);
+//            longArray.forEach(System.out::println);
+            return messageRepository.deleteAllByIdInBatchAndReturnCount(longArray);
+        } catch (Exception e) {
+            System.out.println("deleteMessages e = " + e);
+            log.error("Failed to update message status in deleteMessages() = ", e);
+        }
+        return 0;
+    }
+
+    public static List<Long> convertIterableStringToLong(String[] iterableString) {
+        List<Long> longList = new ArrayList<>();
+        for (String str : iterableString) {
+            try {
+                longList.add(Long.parseLong(str));
+            } catch (NumberFormatException e) {
+                System.err.println("Invalid number format: " + str);
+            }
+        }
+        return longList;
     }
 
      /*public synchronized ResponseMessage sendMessageV2(MessageDTO msg){

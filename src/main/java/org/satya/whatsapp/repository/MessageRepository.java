@@ -1,7 +1,9 @@
 package org.satya.whatsapp.repository;
 
+import jakarta.transaction.Transactional;
 import org.satya.whatsapp.entity.Message;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -25,5 +27,28 @@ public interface MessageRepository extends JpaRepository<Message,Long> {
 
     @Query("SELECT e FROM MESSAGES e WHERE e.id in :mids ")
     List<Message> getNonSendMessagesByMIDs( @Param("mids") String[] mids);
+
+    @Query("SELECT COUNT(m) FROM MESSAGES m WHERE " +
+            "UPPER(m.message) = UPPER(:message) AND " +
+            "UPPER(m.toMobileNumber) = UPPER(:toMobileNumber) AND " +
+            "m.createdonDate  = :createdonDate ")
+    long countByMessageText(
+            @Param("message") String message,
+            @Param("toMobileNumber") String toMobileNumber,
+            @Param("createdonDate") String createdonDate);
+
+    @Query("SELECT COUNT(m) FROM MESSAGES m WHERE " +
+            "UPPER(m.mediaUrl) = UPPER(:mediaUrl) AND " +
+            "UPPER(m.toMobileNumber) = UPPER(:toMobileNumber) AND " +
+            "m.createdonDate  = :createdonDate ")
+    long countByMediaUrl(
+            @Param("mediaUrl") String mediaUrl,
+            @Param("toMobileNumber") String toMobileNumber,
+            @Param("createdonDate") String createdonDate);
+
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM MESSAGES m WHERE m.id IN :ids")
+    int deleteAllByIdInBatchAndReturnCount(List<Long> ids);
 
 }

@@ -2,7 +2,6 @@ package org.satya.whatsapp.config;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.satya.whatsapp.listener.MyListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,7 +30,7 @@ public class WspConfig {
 //    @Autowired
 //    ChatGPTService chatGPTService;
 
-    private static final Logger log = LogManager.getLogger(MyListener.class);
+    private static final Logger log = LogManager.getLogger(WspConfig.class);
 
     // Web API QR Pairing
     @Bean
@@ -53,7 +52,7 @@ public class WspConfig {
 //                    .join(); // Await the result
 
             wsp = Whatsapp.webBuilder()
-                    .serializer(new ProtobufControllerSerializer(path))
+//                    .serializer(new ProtobufControllerSerializer(path))
 //                    .serializer(new DiscardingControllerSerializer(path))
 //                    .serializer(new ProtobufControllerSerializer(path))
 //                    .serializer(new ControllerSerializer(path))
@@ -61,24 +60,22 @@ public class WspConfig {
                     .historyLength(WebHistoryLength.extended())
                     .unregistered(QrHandler.toTerminal())
                     .addLoggedInListener(api -> System.out.printf("Connected: %s%n", api.store().privacySettings()))
-                    .addFeaturesListener(features -> {
-//                                System.out.printf("Received features: %s%n", features);
-                                log.info("Received features: {} ",features);
-                            }
-                    )
+                    .addFeaturesListener(features -> { /*log.info("Received features: {} ",features);*/ })
 //                    .addNewChatMessageListener((api, message) -> System.out.println())
                     .addContactsListener((api, contacts) -> System.out.printf("Contacts: %s%n", contacts.size()))
-                    .addChatsListener((api, chats) -> log.info("Chats: {}", chats))
+                    .addChatsListener((api, chats) -> { /*log.info("Chats: {}", chats);*/ }  )
 //                    .addNewslettersListener((api, newsletters) -> System.out.printf("Newsletters: %s%n", newsletters.size()))
-                    .addNodeReceivedListener(incoming -> log.info("Received node {}", incoming))
-                    .addNodeSentListener(outgoing -> log.info("Sent node {}", outgoing))
-                    .addActionListener ((action, info) -> log.info("New action: {}, info: {}", action, info))
-                    .addSettingListener(setting -> log.info("New setting:{}", setting))
-                    .addContactPresenceListener((chat, contact, status) -> log.info("Status of {} changed in {} to {}", contact, chat.name(), status.name()))
+                    .addNodeReceivedListener(incoming -> { /*log.info("Received node {}", incoming);*/ }  )
+                    .addNodeSentListener(outgoing -> { /*log.info("Sent node {}", outgoing);*/ } )
+                    .addActionListener ((action, info) -> { /*log.info("New action: {}, info: {}", action, info);*/ })
+                    .addSettingListener(setting -> { /*log.info("New setting:{}", setting);*/ } )
+                    .addContactPresenceListener((chat, contact, status) -> { /*log.info("Status of {} changed in {} to {}", contact, chat.name(), status.name());*/ } )
 //                    .addMessageStatusListener((info) -> System.out.printf("Message status update for %s%n", info.id()))
-                    .addChatMessagesSyncListener((api, chat, last) -> log.info("{} now has {} messages: {} (oldest message: {})", chat.name(), chat.messages().size(), !last ? "waiting for more" : "done",""
+                    .addChatMessagesSyncListener((api, chat, last) -> {
+                        /*log.info("{} now has {} messages: {} (oldest message: {})", chat.name(), chat.messages().size(), !last ? "waiting for more" : "done",""
                             //chat.oldestMessage().flatMap(ChatMessageInfo::timestamp).orElse(null)
-                    ))
+                        ); */
+                    })
                     .addDisconnectedListener(reason -> System.out.printf("Disconnected: %s%n", reason))
                     .connect()
                     .join();

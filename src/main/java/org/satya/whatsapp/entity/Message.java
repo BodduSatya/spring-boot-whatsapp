@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name="MESSAGES")
+//@Table(uniqueConstraints = {
+//    @UniqueConstraint(columnNames = {"tomobilenumber", "message", "mediaurl", "createdon_date"})
+//})
 public class Message {
 
     @Id
@@ -41,7 +44,18 @@ public class Message {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime senton;
 
-    public Message(String toMobileNumber,String message,String typeOfMsg,LocalDateTime createdon, String mediaUrl,String caption,long id){
+    // Additional column to store only the date part of 'createdon'
+//    @Transient
+    @Column(name = "createdon_date", nullable = false)
+    private String createdonDate;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdonDate = createdon.toLocalDate().toString(); // Extract only the date part
+    }
+
+    public Message(String toMobileNumber,String message,String typeOfMsg,LocalDateTime createdon,
+                   String mediaUrl,String caption,long id, String fileName){
         this.toMobileNumber = toMobileNumber;
         this.message = message;
         this.typeOfMsg = typeOfMsg;
@@ -49,6 +63,8 @@ public class Message {
         this.mediaUrl = mediaUrl;
         this.caption = caption;
         this.id = id;
+        this.createdonDate = createdon.toLocalDate().toString(); // Initialize createdonDate
+        this.fileName = fileName; // Initialize createdonDate
     }
 
 }

@@ -43,7 +43,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-          httpSecurity
+        httpSecurity
                 .cors(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)  // post requests are not allowed by default by security, so we disabled that option ( csrf = cross-site request forgery )
                 .authorizeHttpRequests(registry ->{
@@ -57,7 +57,11 @@ public class SecurityConfig {
                             "/downloadFile/**",
                             "/uploads/**",
                             "/actuator/**",
-                            "/images/**", "/css/**", "/js/**"
+                            "/images/**", "/css/**", "/js/**",
+                            "/v3/api-docs/**",
+                            "/swagger-ui/**",
+                            "/swagger-ui.html",
+                            "/swagger-ui/index.html"
 
                     ).permitAll();
                     registry.requestMatchers("/admin/**").hasRole("ADMIN");
@@ -78,7 +82,7 @@ public class SecurityConfig {
 //                .authenticationProvider(authenticationProvider())
 //                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 
-                ;
+        ;
 
         httpSecurity.headers(headers -> headers
                 .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable) // Disable frame options

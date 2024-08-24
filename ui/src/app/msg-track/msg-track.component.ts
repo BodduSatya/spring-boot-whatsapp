@@ -148,7 +148,7 @@ export class MsgTrackComponent {
     let mids = [];
 
     this.data.forEach((x: { [x: string]: any; }) => {
-      if (x['sendStatus'] !== '1')
+      // if (x['sendStatus'] !== '1')
         x['checked'] = e.target.checked
 
       if (x['checked']) mids.push(x['id']);
@@ -226,6 +226,35 @@ export class MsgTrackComponent {
       console.log(error);
     }
 
+  }
+
+  deleteMessage(event: any) {
+    let mids: any[] = [];
+    this.data.forEach((x: any) => {
+      if (x['checked'])
+        mids.push(x['id']);
+    });
+
+    if (mids.length === 0) {
+      this.loader.setLoading(false);
+      return this.toast.showWarning("Warning!", 'Please select at least one message to proceed.');
+    }
+
+    var confirmation = confirm(`Are you sure, you want to delete selected ( ${mids.length} ) message(s)?`);
+    if (confirmation) {
+      event.preventDefault();
+      this.loader.setLoading(true);
+
+      this.service.deleteMessage(mids).subscribe((data: any) => {
+        this.loader.setLoading(false);
+        console.log(data);
+        this.getMessages(null);
+        alert(`Total Records Deleted : ${data['total_messages']} \nSuccess : ${data['success_count']} \nFailure : ${data['failure_count']}`)
+      })
+
+    } else {
+      console.log("Action cancelled");
+    }
   }
 
 }

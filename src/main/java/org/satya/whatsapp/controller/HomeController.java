@@ -46,11 +46,11 @@ public class HomeController {
         return "home_user";
     }
 
-    @GetMapping("/login")
-    public String loginForm() {
-        return "customLogin";
-//        return "forward:/loginPage";
-    }
+//    @GetMapping("/login")
+//    public String loginForm() {
+//        return "customLogin";
+////        return "forward:/loginPage";
+//    }
 
     @PostMapping("/authenticate")
     public String authenticate(@RequestBody LoginForm loginForm) {

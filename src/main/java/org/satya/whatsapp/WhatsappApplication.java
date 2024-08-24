@@ -86,7 +86,7 @@ public class WhatsappApplication {
             long failureCount = 0;
 
             if (!queuedMessages.isEmpty()) {
-                System.out.printf("Queued Messages Count: %s", queuedMessages.size());
+                System.out.printf("Queued Messages Count: %s \n", queuedMessages.size());
 
                 ResponseMessage responseMessage = null;
                 for (MessageDTO m : queuedMessages) {

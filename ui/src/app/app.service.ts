@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { environment } from '../environments/environment';
 
 @Injectable({
@@ -37,6 +37,17 @@ export class AppService {
 
   retrySendMessage(mids: any) {
     return this.http.post(`${this.baseUrl}/stats/sendQueuedMessagesByMID`, mids);
+  }
+
+  deleteMessage(mids: any) {
+    const options = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      }),
+      body: mids
+    };
+    // console.log('mids',mids)
+    return this.http.delete(`${this.baseUrl}/stats/deleteMessagesByMID`, options);
   }
 
 }
